@@ -1,0 +1,151 @@
+\chapter{Introduction to distributed computing}
+
+\section{Defining "computer grid"}
+
+\begin{comment}
+
+roadmap:
+https://workflowy.com/shared/a2a23b89-e51f-4f48-4fb9-dd4d9194998f/
+
+wprowadzenie
+
+paradigm shift: kiedyś komputery jako wielkie systemy bez interaktywnego dostępu, wykonywanie zadan, długi czas oczekiwania na zadanie
+później rewolucja "personal computers", (xerox, apple, ibm, ibm compatible) - interaktywny dostęp, każdy mógł wykonywać swoje obliczenia
+teraz obserwujemy kolejną rewolucję (? czy nie nadzbyt dalekoidące wnisoki?) - computer grids, cloud computing, volunteer computing, microsoft xbox one cloud computing for games
+
+co to jest grid, co to jest cloud, co to jest volunteer computing
+
+przykłady już tutaj czy dalej?
+
+"Na jej podstawie została stworzona siec Arpanet, z której wyewoluował ´
+Internet, globalna siec komputerowa. Jej powstanie stworzyło nowe mo ´ zliwo ˙ sci ´
+przesyłania danych do komputerów, do których uzytkownik nie ma bezpo ˙ srednie- ´
+go dost˛epu. Wczesniej przetwarzanie danych było zamkni˛ete w obr˛ebie jedn ´ ego
+osrodka."
+
+\end{comment}
+
+The term "computer grid" is used to describe a system that consists of many computer systems working towards one specific goal. Federation of computers, often spanning multiple physical locations, is the only feasible way of performing large scale computations. The paradigm of abstracting multiple independent systems into one computing entity is a flexible, resilient and cost effective way of computing not only for academic purposes, but also in business.
+
+Setting up a computer cluster is the most straight forward way to approach distributed computing. It can be, however, very challenging hardware-wise and impractical for most use cases. So called "Supercomputers" for rent is another concept, in which organization does not need to have its own setup, but rents resources from another one, and pays certain amount for a time unit. With very significant growth of the Internet in past years, renting computer time through the Web has became popular. Running applications on computers rented this way is often called running "on the computer cloud", to emphasize that the actual location of systems is unknown and does not matter.
+
+Another method of doing large distributing computation are "volunteer grids". Owners of computers (that are usually personal systems) donate their computing resources. Such systems can be centralized, in which special controllers distribute jobs among volunteers and collect results; or decentralized, where jobs are distributed directly to volunteers, usually connected with peer to peer network. "Volunteer grids" are usually used for non-profit work (hence the notion of "donating computer time").
+
+\section{Cloud computing}
+
+With the rise of high bandwidth internet access, it have become possible to loosen constraints of location of nodes in the computer grid. It is no longer needed that systems that are working on one task have to be in local area network. It is feasible to dispatch work to nodes across the globe. Latency may still be an issue, so jobs have to be carefully designed to minimize amount of round trips before computation is complete.
+
+\begin{comment}
+Han-OnTheClouds-2010.pdf
+\end{comment}
+
+"On the Clouds: A New Way of Computing"~\cite{han2013clouds} describes term "cloud computing" as:
+\begin{itemize}
+\item customers do not own newtork resources, such as hardware, software, systems of services;
+\item network resources are provided through remote data centers on a subscription basis; and
+\item network resources are delivered as services over the Web.
+\end{itemize}
+
+Example of cloud computing service is Amazon EC2 (Elastic Computing Cloud, described further in section~\ref{s:comercial_sys}). Servers with chosen configuration - such as processors, amount of RAM, amount of storage, operating systems - are charged on time basis. Servers can be removed or added on demand, and access to new machines is granted within short period of time. This allows for less careful planning before starting the project - one can simply power on new servers up when computing power is not sufficient.
+
+\section{Volunteer Computing}
+
+\begin{comment}
+
+które seti@home cytować?
+
+seti-experimentInComputing.pdf ?
+
+\end{comment}
+
+When personal computers became popular and broadband found its way into regular households it became feasible to offload some of computing tasks to home computers that are often idling or doing less intensive jobs. First, well-known, volunteer computing project, SETI@home~\cite{anderson2002seti}, was launched in 1999. In this project, computer owners worldwide contribute computer resources to search for extraterrestial intelligence. SETI@home uses millions of computers to analyze radio signals from space. Each participant receives fixed-size work units. The client then analyses signal, looking for patterns that might suggest that specific segment of signal isn't just cosmic noise. Worth mentioning is the fact, that work unit usually no bigger than 350KB, but it's enough to keep a regular computer busy for a day. With ratio of work size per work time this low, Internet bandwidth is not that much of a concern. When SETI@home project was starting, many of volunteers were still using dial-up connection.
+
+\begin{comment}
+
+BOINC
+Average FLOPS 2013-06-19: 7,205,094.2 GigaFLOPS / 7,205.094 TeraFLOPS
+http://boincstats.com/en/stats/-1/project/detail/overview
+
+\end{comment}
+
+The potential, however, is much larger. BOINC (Berkeley Open Infrastructure for Network Computing)~\cite{anderson2004boinc} is a system that aggregates projects such as SETI@home. By participating in BOINC, volunteers are actually doing computation for mutliple projects that are part of it. As of June 2013, average combined power of BOINC network was 7,205 TeraFLOPS (Floating Point Operations Per Second)\footnote{\url{http://boincstats.com/en/stats/-1/project/detail/overview}}. A prerequisite for contributing to a computation project is availability of executable matching operating system and architecture of participant's PC. BOINC developers tried to make it as flexible as possible, enabling projects to be compiled from various languages, but there is only so much one can do to support different technologies without giving up on security. Security is another concern of volunteer computing. Users are running programs that cannot be trusted, so their ability of impacting the operating system and users' data has to be limited. Running programs in isolated runtime environment is called sandboxing and different techniques are being researched to reach maximum program speed (so that the program itself isn't affected too much) with maximum safety.
+
+\begin{comment}
+bitcoiny tutaj
+Nakamoto2008_bitcoin.pdf
+
+jak bardzo ogolnikowo pisac?
+- nagrody (coraz mniejsze)
+- 51\%
+
+\end{comment}
+
+As the term \emph{volunteer computing} suggests, most of the work has been done on the systems where users literally donate their computer resources and are not expecting money or any other salary. The main incentives are just being able to be on the project and virtual credits. Most of the projects - e.g. finding cure for cancer - can be considered as public service and users want to help without looking for compensation. The Bitcoin~\cite{nakamoto2008bitcoin} project, however, is an example of network in which users are actively encouraged to participate by offering them compensations (in form of \emph{block rewards} and \emph{transaction fees}). The only way to keep the network running is having a lot of independent nodes~\cite{barber2012bitter}. Success of Bitcoin currency suggests that it's worth to consider designing a network where real monetry compensation for computation performed is offered.
+
+\begin{comment}
+
+podsumowanie volunteer:
+- uczestnicza nieodplatnie, kiedy podoba im sie projekt albo za wirtualne credits
+- wykorzystywany przez uczelnie bez sprzetu i pieniedzy
+
+\end{comment}
+
+\section{Prior work}
+
+\subsection{BOINC and BOINCVM}
+
+\begin{comment}
+dodać boincowe obrazki, screenshoty
+\end{comment}
+
+BOINC (Berkeley Open Infrastructure for Network Computing) is a platform distributed computing. It allows scientists to create and operate public-resource computing projects. Anyone with a PC can participate in multiple BOINC projects. When user runs BOINC client, the following happens:
+
+\begin{enumerate}
+\item Client gets tasks from \emph{scheduling server}. Tasks are selected based on memory, CPU, architecture and operating system constraints (not every task supports every operating system).
+\item Client downloads project executable (application that will do the computing) from \emph{data server}. When project administrators update the executable, client is notified. Always the latest version is used.
+\item The project application is ran, produces output files.
+\item Output files are uploaded back to the project.
+\end{enumerate}
+
+The cycle repeats, with no user interaction whatsoever. Each task may be sent to two clients, to ensure correctness of results. After results are verified, user is given \emph{credit}, to measure how much work has been done.
+
+BOINC projects are distributed as stand alone (or native) applications or VirtualBox virtual machines. Native applications has to use special library to communicate with BOINC for receiving work and sending results back. In BOINC source code repository, example code is provided to help with creating applications.
+
+Native applications should be considered as a security threat, although BOINC claims that no security incidents have been reported. Most BOINC projects are open source (as the BOINC itself) and popular projects are carefully reviewed. BOINC runs native applications in account-based sandbox. Special user account is made in operating systems with limited privileges to prevent applications from overwriting system or computer users' files. Native applications are also signed using public key cryptography. This protects against attacks against BOINC \emph{data server} and replacing applications with malicious ones.
+
+Problem of security is to be solved by using virtualization. VirtualBox virtual machines are completely separated from host operation system (the system on which VirtualBox is running). BOINC provides special virtual device driver for communication between BOINC client and software running on virtual machine. If the VirtualBox software and driver code are properly audited to ensure security, it can be claimed that no software running inside virtual machine can pose a threat to host operating system.
+
+\begin{comment} 
+http://boinc.berkeley.edu/trac/wiki/CompileApp
+http://boinc.berkeley.edu/trac/wiki/VboxApps
+http://boinc.berkeley.edu/wiki/Client_security_and_sandboxing
+\end{comment}
+
+\subsection{CompuP2P}
+
+CompuP2P~\cite{gupta2006compup2p} is described as light-weight architecture for Internet computing. A system that creates dynamic markets of network accessible computing resources. Peer-to-peer architecture is proposed for locating systems that are able to compute jobs. Computing resources are referred as \emph{commodity}. Nodes that are responsible for running commodity markets are termed as "market owners". Market Owners are dynamically created for different sizes (or difficulties, measured in average time to complete) jobs. Market Owner's job is to find best suitable node for computing (a Seller) that best meets the client's (node that wants to perform computation) requirements. Finding best suitable node is referred to as \emph{matchmaking}. Ideally, Market Owners should find the needed computing power for minimum cost.
+
+Matchmaking is implemented similarly to an auction. Nodes with available computing power are asked about their marginal costs. CompuP2P discusses two strategies of selecting a node based on reported costs. Strategies should be employed depending whether listing price (or Market Owner's compensation) is fixed or variable. When listing price is fixed, CompuP2P proposes reverse Vickrey auction. Winning node is the one which posted the second lowest price. Neither Market Owner nor Sellers have incentive to cheat - Seller will never report lower than actual price (because it would be then operating at loss) and Market Owner has no additional gain for dishonestly selecting Seller, for example ones with higher costs.
+
+When listing price is variable, that is it is a certain percent of Seller's reported cost, Market Owner can dishonestly report Seller that is more expensive, increasing its profits. CompuP2P proposes \emph{max-min payoff} strategy. Market Owner's compensation includes fixed payoff and bounded payoff depending on maximum and minimum marginal costs reported by Sellers.
+
+Prototype implementation of CompuP2P is coded in Java, noting platform independence and rich set of APIs. Individual tasks to be computed using CompuP2P can be programmed in any programming technology and have to communicate with CompuP2P software using \emph{RemoteExecution} API.
+
+\subsection{Commercially employed systems}
+\label{s:comercial_sys}
+
+A number of commercially running systems is available, for both companies and private entities. The barrier to entry is really low - practically, everyone (with a credit card) can register to such service and start running their own virtual servers.
+
+Amazon EC2\footnote{\url{http://aws.amazon.com/ec2/}} (Elastic Compute Cloud) is cloud computing platform ran by Amazon.com Inc. EC2 is mostly used to deploy Web applications, but users can run any software desired. EC2 uses so called \emph{Amazon Machine Images} which can be then used to create any number of virtual machines, called \emph{instances}.
+
+Amazon EC2 is a serious competitor in field of not only platform for applications, but also for scientific computing~\cite{walker2008benchmarking}. Research shows, that renting computing power from Amazon can be cost efficient in certain cases~\cite{berriman2013application}.
+
+Another example of cloud platform is Google Compute\footnote{\url{https://cloud.google.com/products/compute-engine/}}, which offers services similar too Amazon EC2.
+
+\section{Contribution of this thesis}
+
+We propose a system for distributed computing in which anyone can request computation project and anyone can contribute to such projects. We call users who want to contribute with their computing power Sellers. Users who want to perform computation are called Buyers. There is a concept of Work Unit which is a part of project that cannot be split any further and has to be computed by one user (one computer system). Buyers are charged per Work Unit and Sellers are compensated depending on how many Work Units they completed. Servers which perform the exchange between Sellers and Buyers are called Markets.
+
+System is flexible, there are no requirement about technology that has to be used to implement computation routines used by Sellers. The API which the applications must conform to is simple and not invasive. System uses lightweight virtual machines which are ran by Sellers and exchange data (receive Work Units, send results back) with main client. Virtual machines are distributed using BitTorrent protocol to save bandwidth.
+
+Markets employ redundant computing strategies along with Seller ranking to mitigate risk of malicious nodes. Work Unit are randomly recomputed and trust of Sellers is evaluated. By doing the redundant computation, system tries to make sure that no invalid results come through as valid ones. As long as there are more honest nodes than dishonest ones, invalid results will keep being discarded because proper result will be sent by honest

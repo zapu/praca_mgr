@@ -1,0 +1,36 @@
+\documentclass[a4paper,12pt,twoside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{multirow}
+\usepackage{xspace}
+\usepackage{verbatim}
+\usepackage[section]{placeins}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage[nottoc,numbib]{tocbibind}
+
+\newcommand{\Buyers}{\emph{Buyers}\xspace}
+\newcommand{\Buyer}{\emph{Buyer}\xspace}
+\newcommand{\Sellers}{\emph{Sellers}\xspace}
+
+\title{Distributed computing for fun and profit}
+\author{Michał Zochniak}
+
+\begin{document}
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+\include{introduction}
+\include{designing}
+\include{simulations}
+\include{prototype}
+\include{conclusions}
+
+\bibliography{praca}{}
+\bibliographystyle{plain}
+
+\end{document}

@@ -1,0 +1,9 @@
+*.aux
+praca.pdf
+*.sublime-*
+*.dvi
+*.toc
+*.bbl
+*.log
+*.blg
+*.out

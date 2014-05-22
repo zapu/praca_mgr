@@ -1,0 +1,118 @@
+\chapter{Designing volunteer computing system}
+
+System presented in this thesis is trying to deal with following problems:
+\begin{enumerate}
+\item \label{goal:flex} How to flexibly define jobs for participants to compute.
+\item \label{goal:malice} How to measure trust to counter malice.
+\item \label{goal:redundancy} How to optimize computing redundancy while still ensuring consistency of the results.
+\item \label{goal:efficient} How to distribute and gather data efficiently.
+\end{enumerate}
+
+We describe proposed solution for goal~\ref{goal:flex} in section~\ref{sec:defining_projects} and in section~\ref{sec:vms}. Our trust model is described in section~\ref{sec:trust_model}. This model should mitigate effects of some types of malicious activities. Also, by using this model we are adjusting computing redundancy, solving goal~\ref{goal:redundancy}. Section~\ref{sec:p2p_projects} describes methods of efficient distribution project files.
+
+Discussed solutions are implemented in the prototype. Prototype is described in chapter~\ref{ch:prototype}. Simulations were also conducted and are described in chapter~\ref{ch:simulations}), to test how the trust model behaves.
+
+\section{Defining projects and jobs}
+\label{sec:defining_projects}
+
+Before introducing rest of the concepts, we have to explain how computing tasks are modeled and limitations of such model. We propose a standard model where there is a \emph{project} and one or (preferably) more \emph{jobs}. Using general terms, the project would be the algorithm, a program (a set of instruction) that takes the input and produces deterministic output. Job describes an input to this program. Proposed model sets a very important constraint on what can be computed using the system - because program is expected to produce deterministic results, one is unable to use the system to compute any probabilistic simulations (such as Monte Carlo). Experiments using probabilistic simulations would have to be changed to be deterministic from the point of view of the system. The random values would become inputs to the program, which then would be distributed to workers as jobs.
+
+\section{Trust model}
+\label{sec:trust_model}
+
+In order to ensure consistency of computation results, trust model has to be established. Ideally, we would like to have an oracle that could determine whether a node can be trusted or not, and we would like to work only with trusted nodes. Our only information about the node are results its sending in. By implementing trust model, we not only want to protect ourselves from dishonest nodes - as in, intentionally sending flawed results. Our second concern are malfunctioning nodes, that are run by honest owners, but due to hardware failures or software bugs are producing bad results. That being said, we are unable to claim that one node is ,,100\% honest''.
+
+\subsection{Background}
+
+We describe the \emph{error rate $\epsilon$} as the number bad results to the final number of all results received. So it is expected for a project that requires $N$ computation jobs done, $\epsilon \times N$ are going to be erroneous. Implementing trust model and redundancy computation methods is a way to have all $N$ computation jobs completed with proper (trusted) results.
+
+Redundancy factor is the number of all results submitted to number of jobs a project has defined. When a project has $N$ job units, we end up dispatching $r \times N$ jobs to nodes to obtain trusted results, where $r \ge 1$ is the redundancy factor. Redundancy factor of $1$ means that we got exactly one result for one job. This is only possible in systems in which we have complete trust over worker nodes. This thesis assumes that no such system exists, so in our $r$ will never reach $1$.
+
+\subsection{Reputation system}
+\label{s:reputation}
+
+We propose a reputation system based on historical performance of nodes. Such system can be described as \emph{credibility-based system}~\cite{Silaghi2009}, where we put more trust in nodes that are submitting error-free results for longer and less trust in newer nodes. The amount of trust we have in one worker decides under what conditions we accept results from that worker. We use this trust measurement to decide when to consider job as done - we have a set of results we consider confirmed and correct.
+
+First of all, we assign each worker node two properties: \emph{correctness} $C$ and \emph{historical experience} $E$. We then consider reliability $R$, based on those two properties, as a function of $n$ode, $p$roject, and $t$ime. Coefficient $\alpha$ is used to decide which one is more important. In our simulations and prototype we assume $\alpha = 0.5$.
+
+\begin{align} \label{eqn:R}
+R(n, p, t) = \alpha {E}_{norm}(n,t) + (1-\alpha)  C_{norm}(n, p)  \nonumber
+\end{align}
+
+Correctness is described in equation~\ref{eq:correctness}. It is a sum of all \emph{confirmations of work} within current project. A node gets a confirmation of work when a different node sends identical results for same work unit. A confirmation worth is equal to 
+
+\begin{equation} \label{eq:correctness}
+C(n, p) = \sum_{i=0}^{l} \text{confirming} R_i,
+\end{equation}
+
+Experience $E$ is sum of all collected credits from historical contributions in the previous projects. 
+Experience is a subject of time decay process.
+
+\begin{equation}
+E(n,t) = \sum_{i=0}^{k} (\frac{1}{2})^{t-t_i} \text{Credits}_i,
+\end{equation}
+
+Now that we have a way of measuring how trusted nodes are, we need to be able to rate our trust towards results of computation. Results are rated using confirmations mechanism. When two or more nodes send identical results for one job, result's correctness is assumed to be equal of a sum of reliabilities of the nodes. When a job has a set of results which correctness is greater or equals than $1$, job is assumed to be done and is not given to more nodes. Similar computation verification methods are presented by Bendahmane et. al.~\cite{bendahmane2012result}.
+
+\subsection{Distribution of jobs}
+\label{s:jobdist}
+
+Distribution of jobs is essential in optimizing the time required to complete a computing project. By efficient job distribution we lower the number of redundant computation needed while still ensuring correctness of results. When a node asks for work, an optimal job to work on is selected, based on following constraints:
+
+\begin{itemize}
+	\item Node has not submitted results for this job before.
+	\item Job result's correctness is less than $1$ (job is not considered done).
+\end{itemize}
+
+The objective function being
+\begin{equation}
+f(j, n, p, t) = 1 - ( R(n, p, t) + R_j(j) )
+\end{equation}
+
+Where $R(n, p, t)$ is node's reputation and $R_j$ is correctness of the job. We want the objective function to end up in range of $- \epsilon < f < + \epsilon$, that is, be close to $0$ but within a defined margin.
+
+When a job has correctness higher than $1$, we consider that a waste of computing power. This way of distributing jobs will attempt to mitigate that and lower amount of this waste.
+
+\subsection{Attacks and mitigation}
+
+Any distributed network is prone to so called ,,Sybil attack''~\cite{douceur2002sybil}. Practically, it is impossible to run completely decentralized and distributed system where running a malicious node is cheaper than running a honest node. In a computing network, an attacker could run number of malicious nodes very easily. A simple dishonest node would receive computing jobs and just return random results without performing any computation. A significant number of such nodes - which can all be run by one entity - can disrupt operations of a computation system.
+
+Our result verification method based on redundant computing, along with reputation system, should prevent incorrect results from being accepted. The best case is when we are only dealing with unintentional flawed results (due to for example hardware failures). This system should also handle single individual nodes deliberately sending wrong results. However, dealing with colluding nodes which create bigger schemes in order to cheat is much harder. The colluding nodes would reply deterministically to computing jobs. So two malicious nodes would generate same results for the same job. The results would be erroneous, but since they would be the same, the nodes would confirm one another. If an attacker deploys huge number of these nodes, suddenly we get a lot of ,,confirmed'' bad results which are very difficult to distinguish from legitimate, proper, results.
+
+\section{Virtual machines}
+\label{sec:vms}
+
+Virtual machines are used in process of defining computation project. Program and all required data and files are packaged within virtual machine image, which is then distributed to workers participating in that project. This method makes the system very flexible as far as choice of programming technologies is concerned. Installing and running prepared virtual machine image by workers is mostly trouble-free, as entire system is contained within the image, so problem of for example missing library dependencies or mismatching system configuration is non-existent using this solution. Virtualization also provides security layer in form of a sandbox. This layer is very important, because a distributed volunteer computing system simply lets possibly unknown entities run any code on users' computers.
+
+Virtual machines introduce the notation of \emph{host OS} and \emph{guest OS}. Host OS (Operating System) is the system under which virtualizator software (such as Virtualbox or VMWare) is ran. This is the native operating system. Guest OS is the system which is being virtualized by the software. Ideally the Guest OS and programs running under it should not be concerned that they are not being ran under "real" operating system and are being virtualized instead.
+
+\subsection{Virtual machine requirements}
+
+Different computing tasks have different CPU time, memory, and disk space requirements. Therefore, not every node can run every task. When virtual machine is created, it has assigned certain CPU thresholds, memory and disk space constraints. This is a reliable way of specifying hardware requirements of a computing tasks. The requirements are not an estimation of what a task will use during the computation, but instead they are hard limits of what a task is able to use. So, the requirements specify ,,worst case''.
+
+\section{Centralized markets}
+
+Important aspect of volunteer computing system is a mechanism to distribute jobs and give credits for work that is fair and can be trusted. There is a demand for a truly peer-to-peer solution, but it outside of the scope of this paper. Presented solution and its prototype is using centralized approach, where there is an entity controlling computational market. This solution is open in a way, that buyers and sellers can freely choose on which market they operate, and anyone can open their own market.
+
+\section{Peer to peer project distribution}
+\label{sec:p2p_projects}
+
+\subsection{Rationale}
+
+In order to minimize amount of bandwidth required for operation, peer to peer file distribution will be employed. Virtual machine images is a good candidate for an asset that can be distributed using peer to peer strategy, reasons including:
+% TODO: itemize items references
+\begin{itemize}
+	\item the exact same copy is being distributed to all participants (1),
+	\item significant filesize (2),
+	\item the communication can be entirely public (3).
+\end{itemize}
+
+Regarding (1), the virtual machine image is the only artifact that is going to be entirely the same for each project participant. The task files are going to be sent to only a few of participants at most, which makes it not unfeasible to just transfer directly. The same goes for task results.
+
+Regarding (2), we are assuming that virtual machine images for computation projects will weight from 500MB to 1GB. This amount per all project participants adds up to produce relatively large amount of bandwidth.
+
+Item (3) is related to further mitigation of attacks at market by malicious entities. Task and results transfers are going to be direct and therefore hidden, so attacker can't estimate how many other nodes are verifying certain task. Virtual machine image carries no such burden, there is no information to gain for attacker from examining which node is downloading the image, which could help them disrupt the market.
+
+\subsection{BitTorrent protocol}
+
+BitTorrent protocol~\cite{cohen2008bittorrent} is going to be implemented in order to transfer data in peer to peer manner.
