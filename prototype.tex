@@ -27,7 +27,7 @@ Both server and the client are running in daemon mode, that is, there is no user
 
 \subsection{Server}
 
-Server is ran by market operator. Server tasks are as following:
+Server is ran by market operator. Server tasks are as follows:
 
 \begin{enumerate}
 	\item \label{ps:register} let nodes register themselves,
@@ -137,15 +137,11 @@ Client API exposes the following methods that can be remotely called by clients:
 
 This call will result in assigning client to a project when the client is not already in a project. Otherwise, current project id is returned, and no changes are made to the client. So this call is not only used to request the project, but also to discover what project is the client working on, after it starts.
 
-Method of scheduling projects is described in section~\ref{s:scheduler}.
-
 \subsection{fetchJob}
 
 \emph{fetchJob} method is used to discover what job client will be working on. Result of this call is job id, which is used later to fetch job data, and to send results back (with \emph{sendResult} method).
 
 This call results in finding new work for client only when client has finished previous job (or hasn't fetched a job in their project yet). There is no way of changing job or aborting one. When client already has a job and calls \emph{fetchJob}, job id of current job is returned, and no changes are made to the client. \emph{fetchJob} is used when client starts (along with \emph{fetchProject}) to start working, whether it will result in getting new project and/or new job, or continuing where the client has left.
-
-Methods of scheduling jobs are described in section~\ref{s:scheduler}.
 
 \subsection{sendResult}
 
