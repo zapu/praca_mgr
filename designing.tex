@@ -52,7 +52,7 @@ Experience is a subject of time decay process.
 E(n,t) = \sum_{i=0}^{k} (\frac{1}{2})^{t-t_i} \text{Credits}_i,
 \end{equation}
 
-Now that we have a way of measuring how trusted nodes are, we need to be able to rate our trust towards results of computation. Results are rated using confirmations mechanism. When two or more nodes send identical results for one job, result's correctness is assumed to be equal of a sum of reliabilities of the nodes. When a job has a set of results which correctness is greater or equals than $1$, job is assumed to be done and is not given to more nodes. Similar computation verification methods are presented by Bendahmane et. al.~\cite{bendahmane2012result}.
+Now that we have a way of measuring how trusted nodes are, we need to be able to rate our trust towards results of computation. Results are rated using confirmations mechanism (or \emph{voting-based verified}\cite{bendahmane2012result}). When two or more nodes send identical results for one job, result's correctness is assumed to be equal of a sum of reliabilities of the nodes. When a job has a set of results which correctness is greater or equals than $1$, job is assumed to be done and is not given to more nodes.
 
 \subsection{Distribution of jobs}
 \label{s:jobdist}
@@ -75,7 +75,7 @@ When a job has correctness higher than $1$, we consider that a waste of computin
 
 \subsection{Attacks and mitigation}
 
-Any distributed network is prone to so called ,,Sybil attack''~\cite{douceur2002sybil}. Practically, it is impossible to run completely decentralized and distributed system where running a malicious node is cheaper than running a honest node. In a computing network, an attacker could run number of malicious nodes very easily. A simple dishonest node would receive computing jobs and just return random results without performing any computation. A significant number of such nodes - which can all be run by one entity - can disrupt operations of a computation system.
+Any distributed network is prone to so-called \emph{Sybil attack}~\cite{douceur2002sybil}. Practically, it is impossible to run completely decentralized and distributed system where running a malicious node is cheaper than running a honest node. In a computing network, an attacker could run number of malicious nodes very easily. A simple dishonest node would receive computing jobs and just return random results without performing any computation. A significant number of such nodes - which can all be run by one entity - can disrupt operations of a computation system.
 
 Our result verification method based on redundant computing, along with reputation system, should prevent incorrect results from being accepted. The best case is when we are only dealing with unintentional flawed results (due to for example hardware failures). This system should also handle single individual nodes deliberately sending wrong results. However, dealing with colluding nodes which create bigger schemes in order to cheat is much harder. The colluding nodes would reply deterministically to computing jobs. So two malicious nodes would generate same results for the same job. The results would be erroneous, but since they would be the same, the nodes would confirm one another. If an attacker deploys huge number of these nodes, suddenly we get a lot of ,,confirmed'' bad results which are very difficult to distinguish from legitimate, proper, results.
 
@@ -88,21 +88,22 @@ Virtual machines introduce the notation of \emph{host OS} and \emph{guest OS}. H
 
 \subsection{Virtual machine requirements}
 
-Different computing tasks have different CPU time, memory, and disk space requirements. Therefore, not every node can run every task. When virtual machine is created, it has assigned certain CPU thresholds, memory and disk space constraints. This is a reliable way of specifying hardware requirements of a computing tasks. The requirements are not an estimation of what a task will use during the computation, but instead they are hard limits of what a task is able to use. So, the requirements specify ,,worst case''.
+Different computing tasks have different CPU time, memory, and disk space requirements. Therefore, not every node can run every task. When virtual machine is created, it has assigned certain CPU thresholds, memory and disk space constraints. This is a reliable way of specifying hardware requirements of a computing tasks. The requirements are not an estimation of what a task will use during the computation, but instead they are hard limits of what a task is able to use. So, the requirements specify the worst case.
 
 \section{Centralized markets}
 
 Important aspect of volunteer computing system is a mechanism to distribute jobs and give credits for work that is fair and can be trusted. There is a demand for a truly peer-to-peer solution, but it outside of the scope of this paper. Presented solution and its prototype is using centralized approach, where there is an entity controlling computational market. This solution is open in a way, that buyers and sellers can freely choose on which market they operate, and anyone can open their own market.
 
+\begin{comment}
 In similar way the bitcoin pooled mining works. Bitcoin miners connect into centralized pool and share their rewards. The pool itself is centralized, but everyone is free to choose their pool, or even open one themselves.
+\end{comment}
 
 \section{Peer to peer project distribution}
 \label{sec:p2p_projects}
 
 \subsection{Rationale}
 
-In order to minimize amount of bandwidth required for operation, peer to peer file distribution will be employed. Virtual machine images is a good candidate for an asset that can be distributed using peer to peer strategy, reasons including:
-% TODO: itemize items references
+In order to minimize amount of bandwidth required for operations, peer to peer file distribution will be employed. Virtual machine images is a good candidate for an asset that can be distributed using peer to peer strategy, reasons including:
 \begin{itemize}
 	\item the exact same copy is being distributed to all participants (1),
 	\item significant filesize (2),
@@ -114,7 +115,3 @@ Regarding (1), the virtual machine image is the only artifact that is going to b
 Regarding (2), we are assuming that virtual machine images for computation projects will weight from 500MB to 1GB. This amount per all project participants adds up to produce relatively large amount of bandwidth.
 
 Item (3) is related to further mitigation of attacks at market by malicious entities. Task and results transfers are going to be direct and therefore hidden, so attacker can't estimate how many other nodes are verifying certain task. Virtual machine image carries no such burden, there is no information to gain for attacker from examining which node is downloading the image, which could help them disrupt the market.
-
-\subsection{BitTorrent protocol}
-
-BitTorrent protocol~\cite{cohen2008bittorrent} is going to be implemented in order to transfer data in peer to peer manner.

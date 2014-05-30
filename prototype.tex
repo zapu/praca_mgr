@@ -5,7 +5,7 @@ This chapter will describe implementation of the prototype, and reason for used 
 
 Prototype was created to test if virtual machine technologies are suitable for use in computing platform. HTTP is leveraged as a communication protocol between nodes and the market. BitTorrent protocol is used to distribute said virtual machines to client. Nodes run VirtualBox virtualization software.
 
-Hypothetical network using system described in this thesis is shown in diagram~\ref{f:protomain}. All nodes connect to the server using HTTP, and communicate with one another using BitTorrent protocol.
+Hypothetical network using system described in this thesis is shown in diagram~\ref{f:protomain}. All nodes connect to the server using HTTP, and communicate with one another using BitTorrent~\cite{cohen2008bittorrent} protocol.
 
 \begin{figure}
 \centering
@@ -21,7 +21,7 @@ Function specification, that is, the requirements of the prototype, are describe
 \section{Functional specification}
 \label{s:funcspec}
 
-This section presents functional specification of the prototype. It describes responsibilities of both the client and the server software. Communication between them is described, which is called the \emph{market API}, as well as method of authentication.
+This section presents functional specification of the prototype. It describes responsibilities of both the client and the server software. Communication between them is described, which is done through the \emph{Market API}, as well as method of authentication.
 
 Both server and the client are running in daemon mode, that is, there is no user interface available. User can inspect operation of both programs by looking at the log files. The configuration is being done by editing configuration files with a text editor.
 
@@ -55,7 +55,7 @@ Client is software running on worker computers. Client should be able to:
 
 (\ref{cs:auth}) means that the client should be able to present itself to the server so both the client can ensure it communicates with entity it think it does, and the server can ensure the client is who it says it is. Methods of doing so are described in section~\ref{s:authentication}.
 
-Receiving jobs from the server (\ref{cs:recv}) consists of two tasks. First is receiving the project, which is the virtual machine and its metadata, from the server. Project files are distributed  After installing and setting the virtual machine up, the client will then ask for job files. Job files are distributed using HTTPS.
+Receiving jobs from the server (\ref{cs:recv}) consists of two tasks. First is receiving the project, which is the virtual machine and its metadata, from the server. Project files are distributed using BitTorrent technology. After installing and setting the virtual machine up, the client will then ask for job files. Job files are distributed using HTTPS.
 
 When the virtual machine is ready and powered up, job files are sent to the machine and it can start the computation (\ref{cs:compute}). When results are ready, virtual machine sends the results to the client, which then sends them back to the server (\ref{cs:send}).
 
@@ -133,7 +133,7 @@ Client API exposes the following methods that can be remotely called by clients:
 
 \subsection{fetchProject}
 
-\emph{fetchProject} API method is used by clients to discover on what project there will be working on. Result of that call is project id, that will be used internally to fetch project data (via another call, which returns project \emph{.torrent} file, described in~\ref{s:project_download_module}).
+\emph{fetchProject} API method is used by clients to discover on what project there will be working on. Result of that call is project id, that will be used internally to fetch project data (distributing projects is explained further in section~\ref{s:torrent_dist}).
 
 This call will result in assigning client to a project when the client is not already in a project. Otherwise, current project id is returned, and no changes are made to the client. So this call is not only used to request the project, but also to discover what project is the client working on, after it starts.
 
@@ -141,7 +141,7 @@ This call will result in assigning client to a project when the client is not al
 
 \emph{fetchJob} method is used to discover what job client will be working on. Result of this call is job id, which is used later to fetch job data, and to send results back (with \emph{sendResult} method).
 
-This call results in finding new work for client only when client has finished previous job (or hasn't fetched a job in their project yet). There is no way of changing job or aborting one. When client already has a job and calls \emph{fetchJob}, job id of current job is returned, and no changes are made to the client. \emph{fetchJob} is used when client starts (along with \emph{fetchProject}) to start working, whether it will result in getting new project and/or new job, or continuing where the client has left.
+This call results in finding new work for client only when client has finished previous job (or has not fetched a job in their project yet). There is no way of changing job or aborting one. When client already has a job and calls \emph{fetchJob}, job id of current job is returned, and no changes are made to the client. \emph{fetchJob} is used when client starts (along with \emph{fetchProject}) to start working, whether it will result in getting new project or new job (or both), or continuing where the client has left.
 
 \subsection{sendResult}
 
@@ -166,6 +166,7 @@ After sending the result, client should ask for another job, using \emph{fetchJo
 \label{s:impldet}
 
 \subsection{Distribution and download modules}
+\label{s:torrent_dist}
 
 \emph{Distribution module} on the server, and corresponding \emph{download module} on the client, are used to to effectively transfer project files (stored on the server) to the client. BitTorrent protocol is used to save bandwidth and speed up the transfer.
 
@@ -245,3 +246,185 @@ Work module is used to communicate with project executable running within virtua
 The protocol is based on HTTP and uses simple GET and POST methods. First, the guest OS is able to ask for job data when it's done setting itself up, using GET request. Then, after computation finishes, it does a POST request to send job computation results. It is important to note that the communication is one-sided as far as data exchange is considered - guest OS initiates both transferring job data and transferring job results. The protocol, however, describes one action in which the host OS initiates communication. It is the "PING" mechanism, which is used to check whether guest OS machine is still computing, and has not crashed because of any critical unforeseen failure. 
 
 The "PING" mechanism is implemented using HEAD requests. Guest OS is expected to host a HTTP server responding to HEAD requests if computing is being performed without problems. Host OS will periodically perform the requests. If any times out, that means the application is not performing computation at the time and has probably hung. Guest OS is to be restarted when such behavior is detected. Guest OS has to ensure that it will not reply to this request when computation is interrupted.
+
+\subsection{Database}
+
+CouchDB\footnote{http://couchdb.apache.org/} is used as database engine. CouchDB is an open source NoSQL database that uses JSON\footnote{Javascript Object Notation, http://www.json.org/} documents. It also allows storing files. Ability to store binary data and the fact that it operates on Javascript Objects made it feasible to use this database engine in the prototype.
+
+Prototype uses \emph{cradle}\footnote{https://github.com/flatiron/cradle} Node.js library to connect to CouchDB.
+
+In the prototype, we use two types of documents. One for projects and one for jobs.
+
+\subsubsection{Project documents}
+
+Example project document looks as follows:
+
+\begin{lstlisting}[caption=Project document in JSON format.]
+{
+   "_id": "737c253d85f094381717159a55007268",
+   "_rev": "9-7cd64eba7ca90f2a05dca23e4f5e2ae1",
+   "type": "project",
+   "participants": [
+       "a26ef8e8165be078e324f62629575c37f69f2d83",
+       "d0efb2a9fd86ef76822f72ad245e0565ed299263",
+   ],
+   "_attachments": {
+       "program": {
+           "content_type": "application/octet-stream",
+           "revpos": 2,
+           "digest": "md5-G+EYqBT17Z3W04UIGiYA2w==",
+           "length": 402938880,
+           "stub": true
+       }
+   }
+}
+\end{lstlisting}
+
+\begin{description}
+\item[\_id and \_rev] are internal CouchDB fields, representing document unique id and revision id.
+\item[type] is always set to "project", defines document type.
+\item[participants] is the list of all nodes participating in the project. Each node is represented by hash of its public key. For more information about using keys for this, refer to section~\ref{s:authentication}.
+\item[\_attachments] is internal CouchDB field for attachment. Each \emph{project} document has one attachment called "program", in which virtual machine image is stored.
+\end{description}
+
+\subsection{Job document}
+
+Example job document looks as follows:
+
+\begin{lstlisting}[caption=Job document in JSON format.]
+{
+   "_id": "737c253d85f094381717159a55007cfa",
+   "_rev": "7-77219fafaabff4263e8cb8e869bd39d8",
+   "type": "work",
+   "project_id": "737c253d85f094381717159a55007268",
+   "results": [
+       {
+           "node": "a26ef8e8165be078e324f62629575c37f69f2d83",
+           "score": 0.006756688654422763,
+           "hash": "1fb021c0a2a953d76a20f064f4a0b8ec6e307687"
+       },
+       {
+           "node": "d0efb2a9fd86ef76822f72ad245e0565ed299263",
+           "score": 0.19533568197607692,
+           "hash": "1fb021c0a2a953d76a20f064f4a0b8ec6e307687"
+       }
+   ],
+   "requests": [
+   ],
+   "_attachments": {
+       "1fb021c0a2a953d76a20f064f4a0b8ec6e307687": {
+           "content_type": "application/octet-stream",
+           "revpos": 4,
+           "digest": "md5-w0Qk2F4ACtibM7KshWfutQ==",
+           "length": 8212,
+           "stub": true
+       },
+       "data": {
+           "content_type": "application/octet-stream",
+           "revpos": 2,
+           "digest": "md5-Vb+Jcqx9ZKMFlFY6jbQg1Q==",
+           "length": 25,
+           "stub": true
+       }
+   }
+}
+\end{lstlisting}
+
+\begin{description}
+\item[\_id and \_rev] are internal CouchDB fields.
+\item[type] is always set to "work" (not "job" due to backwards compatibility reasons).
+\item[results] is array of result objects. Each object has following notation:
+  \begin{description}
+  \item[node] is the id of node sending the result.
+  \item[score] is correctness of node when sending the result.
+  \item[hash] is result of hash function applied to result data. It is used to compare the results (if their hash matches, we assume the results are identical).
+  \end{description}
+ \item[requests] is an array that holds ids of nodes that has been sent the job and the market is awaiting their results. It is the equivalent of \emph{AssumedResult} from the simulator (\ref{s:simdesign}).
+ \item[\_attachments] is the field for attachments. Attachments for this type of document are results and the job data itself. Only one copy of the results is stored per hash (so we do not store identical binary data objects multiple times).
+\end{description}
+
+Each time a node sends its result, we add an item to \emph{results} array. Then, if no other result exists with the same hash, we also store attachment with result data.
+
+\section{Test project}
+
+The prototype comes with an example computing project. The project runs on Node.js platform and is installed under Arch Linux\footnote{https://www.archlinux.org/}. Virtual machine image for the project is 400MB in size.
+
+\subsection{The problem}
+
+The project computes Cunningham chains~\cite{andersen2005cunningham}, which are sequences of prime numbers, that follow that
+
+\begin{equation}
+p_i = 2^{i-1}p_1 + (2^{i-1}-1)
+\end{equation}
+
+Jobs for the project are simply pairs of numbers, first number \emph{from} to start the search, and the second number where the search should end.
+
+\begin{lstlisting}[caption=Javascript code for searching Cunningham chains.]
+checkChain = function(num) {
+  if(!isPrime(num))
+    return null;
+
+  var list = [ num ];
+  var coeff = 2;
+  for(;;) {
+    var val = coeff * num + coeff - 1;
+    if(!isPrime(val)) {
+      return list.length > 1 ? list : null;
+    }
+
+    coeff *= 2;
+    list.push(val);
+  }
+}
+
+module.exports = function(work) {
+  var results = [];
+  for(var i = work.from; i <= work.to; i++) {
+    var chain = checkChain(i);
+    if(chain) {
+      results.push(chain);
+      console.log("Got chain", chain);
+    }
+  }
+  return results;
+}
+\end{lstlisting}
+
+\subsection{Test run}
+
+The prototype is ran from the console and informs user about its progress using \emph{standard output}. Right after running the client applications, user sees:
+
+\begin{lstlisting}[caption=Standard output of client application.]
+Working on project 59ccf0abd01ab22454c428d78b007a5d
+Downloading project virtual machine files...
+  downloading [===================] 100% 0.0s
+
+Download complete
+Download completed, setting up VM...
+Importing VM
+Starting VM
+\end{lstlisting}
+
+Which shows that client has properly registered in project, managed to download virtual machine and set it up within VirtualBox.
+
+We can inspect that the machine is running by using VirtualBox GUI (shown on image~\ref{f:vboxgui}).
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{images/virtualbox.png}
+\caption{VirtualBox GUI showing imported and running virtual machine.}
+\label{f:vboxgui}
+\end{figure}
+
+Then, the client will receive work from the server, send it to the virtual machine, and wait for computation results. This will be repeated until the program is stopped, or there is no more work left for this particular client.
+
+\begin{lstlisting}[caption=Standard output of client application.]
+got work 1
+Waiting for results...
+Submitting work...
+Done
+...
+Done
+{ code: 404, body: 'No more work' }
+Powering down and removing VM
+\end{lstlisting}

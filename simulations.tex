@@ -10,6 +10,7 @@ Simulator created for this thesis is able to test how would hypothetical computi
 Both simulators are implemented in C++, depending on standard C++ library. Parallel simulator uses OpenMPI. Gnuplot is used, along with gnuplot-iostream~\cite{gp-iostream} to plot the resulting data.
 
 \section{Simulator design}
+\label{s:simdesign}
 
 Simulator uses the notion of \emph{Nodes}, \emph{Jobs}, and \emph{Results}. Additionally, \emph{AssumedResult} is defined as the result that is hoped to be delivered by Node, but is not ready yet.
 
@@ -103,7 +104,7 @@ Failure in finding a job for a node is not an error. The simulator will try agai
 
 \section{Simulation results}
 
-This section describes experiments performed using the simulator and reason about inner working of the algorithms trying to understand observed behavior. 
+This section describes experiments performed using the simulator and reason about inner working of the algorithms trying to understand observed behavior.
 
 \subsection{Dishonest nodes}
 
@@ -200,3 +201,7 @@ The network still worked and managed to complete the project. The average number
 \caption{Experiment with network of homogeneous performance. Trust is on the Y axis, time (in ticks) on the X axis.}
 \label{f:evenly}
 \end{figure}
+
+\section{Simulator conclusions}
+
+Significant improvement over our previous model~\cite{zochniakreliable}.
