@@ -7,12 +7,12 @@ In order to test algorithm ideas, one would either have to implement them as a p
 
 Simulator created for this thesis is able to test how would hypothetical computing grid behave, if jobs scheduling and trust management were implemented with methods and algorithms presented beforehand. The simulators are able to simulate dynamics of grid network during computation of one project. Network data, such as nodes' trust, times of completion and number of confirmations of jobs is collected.
 
-Both simulators are implemented in C++, depending on standard C++ library. Parallel simulator uses OpenMPI. Gnuplot is used, along with gnuplot-iostream~\cite{gp-iostream} to plot the resulting data.
+Simulator is implemented in C++, and depends on the standard C++ library and Boost libraries\footnote{\url{http://www.boost.org/}}. Gnuplot is used, along with gnuplot-iostream~\cite{gp-iostream} to plot the resulting data.
 
 \section{Simulator design}
 \label{s:simdesign}
 
-Simulator uses the notion of \emph{Nodes}, \emph{Jobs}, and \emph{Results}. Additionally, \emph{AssumedResult} is defined as the result that is hoped to be delivered by Node, but is not ready yet.
+Simulator uses the notion of \emph{Nodes}, \emph{Jobs}, and \emph{Results}. Additionally, \emph{AssumedResult} is defined as the result that is hoped to be delivered by Node, but is not ready yet. Relations between described classes are shown on figure~\ref{f:simclassdg}.
 
 Node is described by:
 \begin{itemize}
@@ -32,8 +32,6 @@ Job is defined as:
 Result is defined by \emph{hash}, which tells what kind of result it is. Hash value of 0 is considered as a correct result. Any other value makes the result to be considered incorrect, but the results with same hash value confirm one another. So enough incorrect but same results will be accepted as correct by the network, potentially disturbing its progress.
 
 Each result is related to exactly one Node and exactly one Job. Result's \emph{correctness} is defined to be \emph{trust} of the \emph{node} at the time of submitting the result.
-
-Relations between described classes are shown on figure~\ref{f:simclassdg}.
 
 \begin{figure}
 \centering
@@ -69,7 +67,7 @@ Work time is being calculated using following equation:
 \begin{equation}
 W(N, J) = 1 + 100 * \text{difficulty}(J) * (1 - \text{performance}(N))
 \end{equation}
-$W(N, J)$ being the work time (in ticks), $N$ being node for which it is calculated, and $J$ being the job.
+$W(N, J)$ is the work time (in ticks), $N$ is node for which it is calculated, and $J$ is the job.
 
 Work time has a minimum value of 1, and is directly proportional to the difficulty factor of the job, and inversely proportional to node's performance factor. $100$ is used as a constant to scale work time from $1$ to $101$. In simulator, it needs to be a whole number. The fraction is dropped (results of the calculation is casted to an integer).
 
@@ -147,12 +145,12 @@ Figure~\ref{f:trust1} shows trust over time of $3$ selected nodes. \emph{Node $2
 \label{f:trust1}
 \end{figure}
 
-Then, we simulated a network in which one of the nodes joins in the middle of computing project. We can observe its trust quickly growing and reaching its peak, which depends on node's performance factor. Figure~\ref{f:trust_join} shows results of the simulation. \emph{Node 1} is the node joining the project in tick $150$. 
+Then, we simulated a network in which one of the nodes joins in the middle of computing project. We can observe its trust quickly growing and reaching its peak, which depends on node's performance factor. Figure~\ref{f:trust_join} shows results of the simulation. \emph{Node 1} is the node joining the project in tick $150$. Shortly after, node sends its first results and its trust raises.
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{diagrams/trust_join.png}
-\caption{Experiment with node joining the network. Trust is on the Y axis, time (in ticks) on the X axis.}
+\caption{Experiment with node joining the network. Trust is on the Y axis, time (in ticks) on the X axis. In $T_0$ joining node sends its first result and gains trust.}
 \label{f:trust_join}
 \end{figure}
 
@@ -161,15 +159,15 @@ One simulation was conducted with node leaving the network in the middle of proj
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{diagrams/trust_leave.png}
-\caption{Experiment with node leaving the network. Trust is on the Y axis, time (in ticks) on the X axis.}
+\caption{Experiment with node leaving the network. Trust is on the Y axis, time (in ticks) on the X axis. In $T_0$ leaving node sends its last results and does not do work anymore.}
 \label{f:trust_leave}
 \end{figure}
 
 \FloatBarrier
 
-\subsection{Inconvenient cases}
+\subsection{Special cases}
 
-Next, we tested inconvenient cases for the simulation. First one is where there are very few jobs in comparison to the number of nodes. For the simulation, we used a network in which there was only $500$, and $500$ nodes. The results, plotted on figure~\ref{f:less_jobs}, shows that the network can handle such situation as well. The nodes had problem at the beginning to receive jobs (because the competition was high), but it managed to stabilize and the plots look as expected, although in smaller scale - such project was completed very quickly. The average number of sent results per job was $\approx 3.74$. The reason is that the nodes did not get a chance to reach their peak trust.
+Next, we tested special cases for the simulation. First one is where there are very few jobs in comparison to the number of nodes. For the simulation, we used a network in which there was only $500$, and $500$ nodes. The results, plotted on figure~\ref{f:less_jobs}, shows that the network can handle such situation as well. The nodes had problem at the beginning to receive jobs (because the competition was high), but it managed to stabilize and the plots look as expected, although in smaller scale - such project was completed very quickly. The average number of sent results per job was $\approx 3.74$. The reason is that the nodes did not get a chance to reach their peak trust.
 
 \begin{figure}
 \centering
@@ -191,9 +189,9 @@ Second case is where the network has many jobs but less nodes. The simulation wa
 
 \subsection{Case of homogeneous network}
 
-In all previous cases, the nodes performance was evenly distributed. This case shows a network where all nodes have the same performance. Results are plotted on figure~\ref{f:evenly}. The project had $10,000$ nodes and $1000$ jobs. We can observe that competition was very high and all nodes had very high trust, approaching $1$.
+In all previous cases, the nodes performance was not distributed evenly across the nodes. This case shows a network where all nodes have the same performance. Results are plotted on figure~\ref{f:evenly}. The project had $10,000$ nodes and $1000$ jobs. We can observe that competition was very high and all nodes had very high trust, approaching $1$.
 
-The network still worked and managed to complete the project. The average number of results per job was $\approx 2.19$. Although this is not a normal case for volunteer networks, it is not uncommon with computing grids, where all of the hardware is similar or even the same. This experiment shows that the trust model can be used with clusters of homogeneous hardware.
+The network still worked and managed to complete the project. The average number of results per job was $\approx 2.19$. Although this is not a normal case for volunteer networks, it is not uncommon with computing grids, where all of the hardware is similar or even the same. This experiment shows that the developed trust model is applicable to the networks of homogeneous hardware.
 
 \begin{figure}
 \centering
