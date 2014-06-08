@@ -53,7 +53,7 @@ Client is software running on worker computers. Client should be able to:
 	\item \label{cs:send} send back results of the computation.
 \end{enumerate}
 
-(\ref{cs:auth}) means that the client should be able to present itself to the server so both the client can ensure it communicates with entity it think it does, and the server can ensure the client is who it says it is. Methods of doing so are described in section~\ref{s:authentication}.
+(\ref{cs:auth}) means that the client should be able to present itself to the server so the client can ensure it communicates with entity it think it does, and the server can ensure the client is who it says it is. Methods of doing so are described in section~\ref{s:authentication}.
 
 Receiving jobs from the server (\ref{cs:recv}) consists of two tasks. First is receiving the project, which is the virtual machine and its metadata, from the server. Project files are distributed using BitTorrent technology. After installing and setting the virtual machine up, the client will then ask for job files. Job files are distributed using HTTPS.
 
@@ -66,7 +66,7 @@ The process is also shown in the figure~\ref{f:clientflow}.
 \begin{figure}
 \centering
 \includegraphics{diagrams/ClientFlowchart.pdf}
-\caption{Client flowchart}
+\caption{Client flowchart.}
 \label{f:clientflow}
 \end{figure}
 
@@ -104,7 +104,7 @@ This section describes modules visible in client environment, pictured on figure
 
 \item[Virtual machine module] is used to control virtual machines. VirtualBox\footnote{Virtualbox is a free virtualization product by Oracle, \url{https://www.virtualbox.org/}.} is used as a virtualization engine. This module is used to set up and start virtual machines, when the client starts working on a project.
 
-\item[Work host module] is used to communicate with computing program that is running withing the virtual machine. Because we generally do not place restrictions on what computing programs can be used, special layer has been created in order to exchange data and results with programs. \textbf{Work host module} communicates with \textbf{Work controller module} which is running in virtual machine, and can directly 
+\item[Work host module] is used to communicate with computing program that is running withing the virtual machine. Because we generally do not place restrictions on what computing programs can be used, special layer has been created in order to exchange data and results with programs. \textbf{Work host module} communicates with \textbf{Work controller module} which is running inside of the virtual machine, and can directly fetch work as soon as the computing program is ready, and send back results when computing is done.
 
 \end{description}
 
@@ -133,7 +133,7 @@ Client API exposes the following methods that can be remotely called by clients:
 
 \subsection{fetchProject}
 
-\emph{fetchProject} API method is used by clients to discover on what project there will be working on. Result of that call is project id, that will be used internally to fetch project data (distributing projects is explained further in section~\ref{s:torrent_dist}).
+\emph{fetchProject} API method is used by clients to discover on what project they will be working on. Result of that call is project id, that will be used internally to fetch project data (distributing projects is explained further in section~\ref{s:torrent_dist}).
 
 This call will result in assigning client to a project when the client is not already in a project. Otherwise, current project id is returned, and no changes are made to the client. So this call is not only used to request the project, but also to discover what project is the client working on, after it starts.
 
@@ -145,11 +145,11 @@ This call results in finding new work for client only when client has finished p
 
 \subsection{sendResult}
 
-\emph{sendResult} is called by client when their computation is finished and results are ready to be sent back. Results are sent as a binary data and the server does not care about the format. This is done to ensure maximum flexibility as far as projects are concerned. After receiving, initial correctness of the is computed, which is the reliability of the node. 
+\emph{sendResult} is called by client when their computation is finished and results are ready to be sent back. Results are sent as a binary data and the server does not care about the format. This is done to ensure maximum flexibility as far as projects are concerned. After receiving, initial correctness of the result is computed, which is the reliability of the node. 
 
 Hash of the data (using SHA1) is computed. We can now easily compare newly received result to results that have been handed in before. For each of the results that are equal (hash values match), \emph{total score} is increased. Job record keep \emph{total score} for each unique result received, by mapping it to the hash value. When unique result's score exceeds $1$, the job is marked as \emph{done}.
 
-If there is are no prior results with hash matching, the raw data is also saved to the database.
+If there are no prior results with hash matching, the raw data is also saved to the database.
 
 Example of completing results is shown in figure~\ref{f:sendresultsex}.
 
@@ -170,9 +170,9 @@ After sending the result, client should ask for another job, using \emph{fetchJo
 
 \emph{Distribution module} on the server, and corresponding \emph{download module} on the client, are used to to effectively transfer project files (stored on the server) to the client. BitTorrent protocol is used to save bandwidth and speed up the transfer.
 
-\emph{node-torrent}\footnote{https://github.com/zapu/node-torrent} library is used by both modules. It is used to parse \emph{.torrent} files. \emph{node-torrent} is also a BitTorrent client. Important fact is that the server also runs a BitTorrent client and takes part in BitTorrent data exchange. In theory, after the first worker of the project downloads the project data, server could stop serving it. But in practice, it is better for the network if the server remains active.
+\emph{node-torrent}\footnote{https://github.com/zapu/node-torrent} library is used by both modules. It is used to parse \emph{.torrent} files. \emph{node-torrent} is also a BitTorrent client. Important fact is that the server also runs a BitTorrent client and takes part in BitTorrent data exchange. In theory, after the first worker of the project downloads the project data, server could stop serving it. In practice, however, it is better for the network if the server remains active.
 
-Download module uses \emph{node-torrent} module to provide ability to use BitTorrent protocol to fetch project data. Project data consists of VirtualBox virtual machine files. The module export one function, which given the \emph{.torrent} file, will proceed with the download and call back when it is completed.
+Download module uses \emph{node-torrent} module to provide ability to use BitTorrent protocol to fetch project data. Project data consists of VirtualBox virtual machine files. The module exports one function, which given the \emph{.torrent} file, will proceed with the download and call back when it is completed.
 
 The \emph{.torrent} contains all the metadata necessary to download and verify data, which in our case is virtual machine image. Also included are URL addresses of torrent trackers, which serve as a "meeting point" for nodes, in case node discovery via Distributed Hash Table fails.
 
@@ -370,7 +370,7 @@ module.exports = function(work) {
 
 \subsection{Test run}
 
-The prototype is ran from the console and informs user about its progress using \emph{standard output}. Right after running the client applications, user sees:
+The prototype is ran from the console and it informs user about its progress using \emph{standard output}. Right after running the client applications, user sees:
 
 \begin{lstlisting}[caption=Standard output of client application.]
 Working on project 59ccf0abd01ab22454c428d78b007a5d
