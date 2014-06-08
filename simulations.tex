@@ -16,7 +16,7 @@ Simulator uses the notion of \emph{Nodes}, \emph{Jobs}, and \emph{Results}. Addi
 
 Node is described by:
 \begin{itemize}
-\item Performance - how quickly the node is able to generate new results.
+\item Performance ($\in [0,1]$) - how quickly the node is able to generate new results.
 \item Trust - current accumulated amount of trust from the confirming results.
 \item Current job - job the node is currently computing.
 \item Submitted results - collection of all submitted results.
@@ -24,12 +24,12 @@ Node is described by:
 
 Job is defined as:
 \begin{itemize}
-\item Difficulty - how difficult the task is to compute. Directly affects how long the node will spend on computing the task.
+\item Difficulty ($\in [0,1]$) - how difficult the task is to compute. Directly affects how long the node will spend on computing the task.
 \item Results - collection of results already delivered.
 \item Assumed results - collection of results that are hoped to be delivered.
 \end{itemize}
 
-Result is defined by \emph{hash}, which tells what kind of result it is. Hash value of 0 is considered as a correct result. Any other value makes the result to be considered incorrect, but the results with same hash value confirm one another. So enough incorrect but same results will be accepted as correct by the network, potentially disturbing its progress.
+Result is defined by \emph{hash}, which tells what kind of result it is. Hash value of $0$ is considered as a correct result. Any other value makes the result to be considered incorrect, but the results with same hash value confirm one another. So enough incorrect but same results will be accepted as correct by the network, potentially disturbing its progress.
 
 Each result is related to exactly one Node and exactly one Job. Result's \emph{correctness} is defined to be \emph{trust} of the \emph{node} at the time of submitting the result.
 
@@ -41,6 +41,8 @@ Each result is related to exactly one Node and exactly one Job. Result's \emph{c
 \end{figure}
 
 \section{Simulator loop}
+
+At the beginning of the simulation, selected amount of nodes and jobs is being created. Each node is assigned with random performance, and each job with random difficulty (unless simulator is executing one of the scenarios where performance or difficulty selection is biased).
 
 Simulation is done by evaluating each node in a loop. Time is represented by abstract time unit called \emph{tick}. Every iteration of the loop is simulation of network in consecutive time units. In each iteration, every node is evaluated, by doing as follows:
 \begin{itemize}

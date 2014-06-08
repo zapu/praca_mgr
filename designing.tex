@@ -61,7 +61,7 @@ Distribution of jobs is essential in optimizing the time required to complete a 
 
 \begin{itemize}
 	\item Node has not submitted results for this job before.
-	\item Job result's correctness is less than $1$ (job is not considered done).
+    \item Sum of results' correctness of the job is less than $1$ (job is not considered \emph{done}).
 \end{itemize}
 
 The objective function being
@@ -82,7 +82,7 @@ Our result verification method based on redundant computing, along with reputati
 \section{Virtual machines}
 \label{sec:vms}
 
-Virtual machines are used in process of defining computation project. Program and all required data and files are packaged within virtual machine image, which is then distributed to workers participating in that project. This method makes the system very flexible as far as choice of programming technologies is concerned. Installing and running prepared virtual machine image by workers is mostly trouble-free, as entire system is contained within the image, so problem of for example missing library dependencies or mismatching system configuration is non-existent using this solution. Virtualization also provides security layer in form of a sandbox. This layer is very important, because a distributed volunteer computing system simply lets possibly unknown entities run any code on users' computers.
+Virtual machines are used in process of defining computation project. Program and all required data and files are packaged within virtual machine image, which is then distributed to workers participating in that project. This method makes the system very flexible as far as choice of programming technologies is concerned. Installing and running prepared virtual machine image by workers is mostly trouble-free, as entire system is contained within the image, so problem of, for example, missing library dependencies or mismatching system configuration is non-existent using this solution. Virtualization also provides security layer in form of a sandbox. This layer is very important, because a distributed volunteer computing system simply lets possibly unknown entities run any code on users' computers.
 
 Virtual machines introduce the notation of \emph{host OS} and \emph{guest OS}. Host OS (Operating System) is the system under which virtualizator software (such as Virtualbox or VMWare) is ran. This is the native operating system. Guest OS is the system which is being virtualized by the software. Ideally the Guest OS and programs running under it should not be concerned that they are not being ran under "real" operating system and are being virtualized instead.
 
@@ -92,7 +92,7 @@ Different computing tasks have different CPU time, memory, and disk space requir
 
 \section{Centralized markets}
 
-Important aspect of volunteer computing system is a mechanism to distribute jobs and give credits for work that is fair and can be trusted. There is a demand for a truly peer-to-peer solution, but it outside of the scope of this paper. Presented solution and its prototype is using centralized approach, where there is an entity controlling computational market. This solution is open in a way, that buyers and sellers can freely choose on which market they operate, and anyone can open their own market.
+Important aspect of volunteer computing system is a mechanism to distribute jobs and give credits for work that is fair and can be trusted. There is a demand for a truly peer-to-peer solution, but it is outside of the scope of this paper. Presented solution and its prototype is using centralized approach, where there is an entity controlling computational market. This solution is open in a way, that buyers and sellers can freely choose on which market they operate, and anyone can open their own market.
 
 \begin{comment}
 In similar way the bitcoin pooled mining works. Bitcoin miners connect into centralized pool and share their rewards. The pool itself is centralized, but everyone is free to choose their pool, or even open one themselves.

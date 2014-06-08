@@ -244,7 +244,7 @@ Work module is used to communicate with project executable running within virtua
 \label{f:clientseq}
 \end{figure}
 
-The protocol is based on HTTP and uses simple GET and POST methods. First, the guest OS is able to ask for job data when it's done setting itself up, using GET request. Then, after computation finishes, it does a POST request to send job computation results. It is important to note that the communication is one-sided as far as data exchange is considered - guest OS initiates both transferring job data and transferring job results. The protocol, however, describes one action in which the host OS initiates communication.
+The protocol is based on HTTP and uses simple GET and POST methods. First, the guest OS is able to ask for job data when it is done setting itself up, using GET request. Then, after computation finishes, it does a POST request to send job computation results. It is important to note that the communication is one-sided as far as data exchange is considered - guest OS initiates both transferring job data and transferring job results. The protocol, however, describes one action in which the host OS initiates communication.
 
 \subsection{Database}
 
@@ -318,7 +318,7 @@ Example job document looks as follows:
   \item[hash] is result of hash function applied to result data. It is used to compare the results (if their hash matches, we assume the results are identical).
   \end{description}
  \item[requests] is an array that holds ids of nodes that has been sent the job and the market is awaiting their results. It is the equivalent of \emph{AssumedResult} from the simulator (\ref{s:simdesign}).
- \item[\_attachments] is the field for attachments. Job document
+ \item[\_attachments] is the CouchDB field for attachments. Job document contains job data that is sent to clients, and results that are computed by clients and sent back.
 \end{description}
 
 Each time a node sends its result, we add an item to \emph{results} array. Then, if no other result exists with the same hash, we also store attachment with result data.
