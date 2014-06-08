@@ -15,9 +15,11 @@
 \def\opiekun#1{\gdef\@opiekun{#1}}
 \def\recenzent#1{\gdef\@recenzent{#1}}
 \def\terminwykonania#1{\gdef\@terminwykonania{#1}}
+\def\terminwykonaniapl#1{\gdef\@terminwykonaniapl{#1}}
 \def\datawydaniatematu#1{\gdef\@datawydaniatematu{#1}}
 
 \long\def\streszczenie#1{\gdef\@streszczenie{#1}}
+\long\def\streszczeniepl#1{\gdef\@streszczeniepl{#1}}
 
 \def\miasto#1{\gdef\@miasto{#1}}
 \def\uczelnia#1{\gdef\@uczelnia{#1}}
@@ -37,7 +39,7 @@
 \gdef\@miasto{Warsaw}
 \gdef\@uczelnia{WARSAW UNIVERSITY OF TECHNOLOGY}
 \gdef\@wydzial{FACULTY OF ELECTRICAL ENGINEERING}
-\gdef\@instytut{INSTYTUT ELEKTROTECHNIKI TEORETYCZNEJ\linebreak[1] I~SYSTEMÓW INFORMACYJNO-POMIAROWYCH}
+\gdef\@instytut{INSTITUTE OF THEORY OF ELECTRICAL ENGINEERING,\linebreak[1] MEASUREMENT AND INFORMATION SYSTEMS}
 \gdef\@zaklad{ZAKŁAD ELEKTROTECHNIKI TEORETYCZNEJ\linebreak[1] I~INFORMATYKI STOSOWANEJ}
 \gdef\@rodzajpracy{MASTER'S THESIS}
 \gdef\@kierunekstudiow{COMPUTER SCIENCE}
@@ -59,16 +61,29 @@
  \global\@topnum\z@ \@maketitle \fi\thispagestyle{empty}\@thanks
  \endgroup
  \@oswiadczenie
-  \cleardoublepage
+   \cleardoublepage
    \pagenumbering{roman}
    \thispagestyle{empty}
-   \centerline{\large\bf Streszczenie pracy}
+   \vspace*{\fill}
+   \centerline{\large\bf Abstract}
    \vspace{1cm}
    \@streszczenie
+   \vspace*{\fill}
+
+   \cleardoublepage
+   \pagenumbering{roman}
+   \thispagestyle{empty}
+   \vspace*{\fill}
+   \centerline{\large\bf Streszczenie pracy}
+   \vspace{1cm}
+   \@streszczeniepl
+   \vspace*{\fill}
+
    \pagestyle{empty}
    \cleardoublepage
    \pagestyle{plain}
    \setcounter{page}{1}
+   \setcounter{tocdepth}{1}
    \tableofcontents
    %\thispagestyle{empty}
  \newpage
@@ -115,7 +130,7 @@
  \end{tabular}\bigskip\par}
  {%\large
  \raggedleft\begin{tabular}[t]{l}%
- \@ifundefined{@rokakademicki}{\relax}{Rok akad.: \@rokakademicki\\}%
+ \@ifundefined{@rokakademicki}{\relax}{Academic year: \@rokakademicki\\}%
  \@miasto, \@datawydaniatematu%
  \end{tabular}
  \par
@@ -127,17 +142,17 @@
  \end{center}
 % \vfill
  \vspace{\stretch{1}}
-\@ifundefined{@zakres}{\relax}{\vspace{\stretch{1}}{\bf Zakres pracy:}\@zakres\par}
+\@ifundefined{@zakres}{\relax}{\vspace{\stretch{1}}{\bf Scope:}\@zakres\par}
 \vspace{\stretch{3}}
 % \@ifundefined{@opiekun}{\relax}{%
 \noindent
   \hfill
   \textit{\scriptsize%
   \begin{tabular}[t]{c}
-    (Podpis i~pieczątka \\ Kierownika Zakładu \\ Dydaktycznego)
+    (Head of the Chair)
   \end{tabular}%
   } \par
-\@ifundefined{@opiekun}{\relax}{\vspace{\stretch{1}}\noindent {\bf Kierujący pracą: }\@opiekun\par\vskip1.5ex}
+\@ifundefined{@opiekun}{\relax}{\vspace{\stretch{1}}\noindent {\bf Thesis Supervisor: }\@opiekun\par\vskip1.5ex}
 %\@ifundefined{@recenzent}{\relax}{\vspace{\stretch{1}}\noindent {\bf Recenzent: }\@recenzent\par}
 \@ifundefined{@konsultant}{\relax}{\vspace{\stretch{1}}\noindent {\bf Konsultant: }\@konsultant\par}
  \vskip 2.5em
@@ -146,7 +161,7 @@
  %
  {%\large
 \noindent
- \@ifundefined{@terminwykonania}{\relax}{\\Termin wykonania: \@terminwykonania}\\
+ \@ifundefined{@terminwykonania}{\relax}{\\Date of completion: \@terminwykonania}\\
 {\footnotesize Praca wykonana i zaliczona pozostaje\\
  własnością Instytutu i nie będzie \\
 zwrócona wykonawcy}
@@ -155,7 +170,7 @@ zwrócona wykonawcy}
 \long\def\@oswiadczenie{
 \cleardoublepage
 {\raggedleft
-Warszawa, dnia \@terminwykonania r.
+Warszawa, dnia \@terminwykonaniapl r.
 
 }
 

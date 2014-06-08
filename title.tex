@@ -1,6 +1,6 @@
 
 % To trzeba wypelnic swoimi danymi
-\title{Distributed computing for fun and profit}
+\title{Reliable peer-to-peer volunteer computing system}
 
 % autor(zy)
 \author{Michał Zochniak}
@@ -10,22 +10,29 @@
 
 \opiekun{dr hab inż. Bartosz Sawicki}
 % opcjonalnie: \konsultant{prof. Dzielny Konsultant}
-\terminwykonania{10 czerwca 2014} % data złożenia - pokazana na stronie tytułowej
-\datawydaniatematu{5 marca 2013}
+\terminwykonania{10th of June 2014} % data złożenia - pokazana na stronie tytułowej
+\terminwykonaniapl{10 czerwca 2014} % data złożenia - pokazana na stronie tytułowej
+\datawydaniatematu{5th of March 2013}
 \rokakademicki{2013/2014}
 
 \streszczenie{
-    Celem pracy dyplomowej było stworzenie systemu do przeprowadzania zdalnych testów użyteczności serwisów internetowych. Głównym założeniem systemu była możliwość uczestniczenia w testach użyteczności zdalnie (,,bez wychodzenia z domu'') oraz bez konieczności instalacji dodatkowego oprogramowania na komputerach testerów. Zaimplementowany w ramach pracy system pozwala na zdefiniowanie scenariuszy testowych oraz na przeprowadzenie testów użyteczności których wynikiem są raporty testowe.
+    The goal of this thesis was to design a distributed computing system based on the idea of volunteer computing. Concept of computing market is presented, where owners of spare computing power can sell their resources to people who need to perform computation. Means of validating correctness of the result is proposed, which is based on a model of measuring trust of nodes.
 
-    Raporty z przebiegu testu tworzone są przy użyciu serwera proxy który jest w stanie przechwytywać ruch między testerem a testowanym serwisem internetowym. Opracowana została metoda identyfikowania poszczególnych sesji testowych za pomocą ,,wstrzykiwania cookie'' przy rozpoczęciu sesji. Za pomocą proxy, strony HTML testowanego serwisu dekorowane są kodem JavaScript który przechwytuje zdarzenia takie jak kliknięcia myszą lub wypełnianie pól formularzy. Opracowane oraz opisane zostały trzy metody przechwytywania zdarzeń, jedna z nich została zaimplementowana w systemie.
+    In order to test the trust model, a simulator was created. The simulator can simulate computing network of any number of nodes and any number of jobs. The thesis describes the simulator, as well as results of simulations performed. Conducted experiments have shown that presented model is valid, and can prevent some degree of malicious activity in the network.
 
-    Praca zawiera specyfikację funkcjonalną oraz specyfikację niefunkcjonalną systemu. Specyfikacja funkcjonalna przedstawia główne założenia aplikacji, dodatkowo wzbogacona jest o makiety interfejsów użytkownika. Specyfikacja niefunkcjonalna opisuje sposób podziału systemu na moduły oraz opisy poszczególnych modułów. Opisy modułów wspierane są przez diagramy klas oraz diagramy sekwencji. Przedstawione zostały również rozwiązania programistyczne stojące za modułem proxy oraz przechwytywaniem zdarzeń na stronach HTML.
+    Prototype of volunteer computing system is presented. Prototype uses lightweight virtual machines as container for computing programs. Oracle VirtualBox technology is used. BitTorrent protocol is used to optimize virtual machine data transfer from server to the nodes. Prototype is implemented in Node.js.
 
-    Do zaimplementowania systemu wykorzystana została platforma Node.js oraz baza danych CouchDB. Elementy interfejsu użytkownika aplikacji stworzone zostały przy użyciu biblioteki JQuery. W pracy dyplomowej jeden rozdział poświęcono wykorzystanym technologiom.
+    Thesis ends with conclusions. Problems with this solutions have been identified and noted. The chapter also shows possible way in how to improve on the idea of volunteer computing.
+}
 
-    Jeden z rozdziałów pracy poświęcono opracowanym metodom przechwytywania zdarzeń. Należy pamiętać, że przeglądarki internetowe same w sobie nie zapewniają funkcjonalności śledzenia zdarzeń. Wszystkie opracowane metody wykorzystują funkcjonalności przeglądarek które nie są do tego przeznaczone, stąd do przedstawionych rozwiązań należy podchodzić z pewną rezerwą.
+\streszczeniepl{
+    Celem pracy dyplomowej było zaprojektowanie systemu do obliczeń rozproszonych przeprowadzanych na bazie wolontariatu. Zaprezentowana jest koncepcja rynków obliczeniowych, gdzie posiadacze nieużywanych zasobów komputerowych mogą sprzedawać zasoby osobom które potrzebują przeprowadzić obliczenia. Zaproponowano mechanizm sprawdzania poprawności wyników, który oparty jest na modelu określania zaufania poszczególnych węzłów biorących udział w obliczeniach.
 
-    Praca zakończona jest podsumowaniem. Przedstawiono możliwe kierunku rozwoju systemu, również nakreślając inne technologie mogące umożliwić śledzenie sesji testowych.
+    W celu przetestowania proponowanego modelu zaufania, stworzony został symulator, który symuluje sieć o dowolnej ilości węzłów oraz zadań. Praca zawiera opis symulatora, a także wyniki przeprowadzonych symulacji. Symulacje pozwoliły ocenić stworzony model oraz wnioskować, że z jego pomocą można zniwelować pewne klasy ataków na sieć obliczeniową.
+
+    Na potrzeby pracy powstał prototyp systemu. Prototyp wykorzystuje lekkie maszyny wirtualne jako kontenery dla aplikacji prowadzących obliczenia. Wykorzystana została technologia Oracle VirtualBox. Protokół BitTorrent używany jest w celu zoptymalizowania transferu danych maszyny wirtualnej z serwera do węzłów. Całość prototypu zaimplementowana jest w technologii Node.js oraz wykorzystuje bazę danych CouchDB.
+
+    Praca zakończona jest podsumowaniem. Zidentyfikowano problemy które wyszły poza obszar tej pracy oraz przedstawiono możliwe kierunku rozwoju sieci opartej o wolontariat.
 }
 
 % zakres pracy

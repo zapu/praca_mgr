@@ -233,6 +233,7 @@ import_vm = (path, name, autocb) ->
 \end{lstlisting}
 
 \subsection{Work module}
+\label{s:workmod}
 
 Work module is used to communicate with project executable running within virtual machine. It works by creating a HTTP server in local network (network between the virtual machine and the host operating system). The project then makes requests to this web server, receiving work items, until there is no more work left. Sequence diagram in figure~\ref{f:clientseq} shows an example situation where work is fetched from the market (\emph{MarketAPI}), a virtual machine is powered on (via \emph{VM Module}) and data is exchanged with computing program on the virtual machine using \emph{work module} (\emph{Virtual machine project} on the diagram).
 
@@ -243,9 +244,7 @@ Work module is used to communicate with project executable running within virtua
 \label{f:clientseq}
 \end{figure}
 
-The protocol is based on HTTP and uses simple GET and POST methods. First, the guest OS is able to ask for job data when it's done setting itself up, using GET request. Then, after computation finishes, it does a POST request to send job computation results. It is important to note that the communication is one-sided as far as data exchange is considered - guest OS initiates both transferring job data and transferring job results. The protocol, however, describes one action in which the host OS initiates communication. It is the "PING" mechanism, which is used to check whether guest OS machine is still computing, and has not crashed because of any critical unforeseen failure. 
-
-The "PING" mechanism is implemented using HEAD requests. Guest OS is expected to host a HTTP server responding to HEAD requests if computing is being performed without problems. Host OS will periodically perform the requests. If any times out, that means the application is not performing computation at the time and has probably hung. Guest OS is to be restarted when such behavior is detected. Guest OS has to ensure that it will not reply to this request when computation is interrupted.
+The protocol is based on HTTP and uses simple GET and POST methods. First, the guest OS is able to ask for job data when it's done setting itself up, using GET request. Then, after computation finishes, it does a POST request to send job computation results. It is important to note that the communication is one-sided as far as data exchange is considered - guest OS initiates both transferring job data and transferring job results. The protocol, however, describes one action in which the host OS initiates communication.
 
 \subsection{Database}
 
@@ -262,40 +261,32 @@ Example project document looks as follows:
 \begin{lstlisting}[caption=Project document in JSON format.]
 {
    "_id": "737c253d85f094381717159a55007268",
-   "_rev": "9-7cd64eba7ca90f2a05dca23e4f5e2ae1",
    "type": "project",
    "participants": [
        "a26ef8e8165be078e324f62629575c37f69f2d83",
        "d0efb2a9fd86ef76822f72ad245e0565ed299263",
    ],
    "_attachments": {
-       "program": {
-           "content_type": "application/octet-stream",
-           "revpos": 2,
-           "digest": "md5-G+EYqBT17Z3W04UIGiYA2w==",
-           "length": 402938880,
-           "stub": true
-       }
+       ...
    }
 }
 \end{lstlisting}
 
 \begin{description}
-\item[\_id and \_rev] are internal CouchDB fields, representing document unique id and revision id.
+\item[\_id] is an internal CouchDB field, which is an unique id of the document.
 \item[type] is always set to "project", defines document type.
 \item[participants] is the list of all nodes participating in the project. Each node is represented by hash of its public key. For more information about using keys for this, refer to section~\ref{s:authentication}.
 \item[\_attachments] is internal CouchDB field for attachment. Each \emph{project} document has one attachment called "program", in which virtual machine image is stored.
 \end{description}
 
-\subsection{Job document}
+\subsubsection{Job document}
 
 Example job document looks as follows:
 
 \begin{lstlisting}[caption=Job document in JSON format.]
 {
    "_id": "737c253d85f094381717159a55007cfa",
-   "_rev": "7-77219fafaabff4263e8cb8e869bd39d8",
-   "type": "work",
+   "type": "job",
    "project_id": "737c253d85f094381717159a55007268",
    "results": [
        {
@@ -312,27 +303,14 @@ Example job document looks as follows:
    "requests": [
    ],
    "_attachments": {
-       "1fb021c0a2a953d76a20f064f4a0b8ec6e307687": {
-           "content_type": "application/octet-stream",
-           "revpos": 4,
-           "digest": "md5-w0Qk2F4ACtibM7KshWfutQ==",
-           "length": 8212,
-           "stub": true
-       },
-       "data": {
-           "content_type": "application/octet-stream",
-           "revpos": 2,
-           "digest": "md5-Vb+Jcqx9ZKMFlFY6jbQg1Q==",
-           "length": 25,
-           "stub": true
-       }
+       ...
    }
 }
 \end{lstlisting}
 
 \begin{description}
-\item[\_id and \_rev] are internal CouchDB fields.
-\item[type] is always set to "work" (not "job" due to backwards compatibility reasons).
+\item[\_id] is an internal CouchDB field, which is an unique id of the document.
+\item[type] is always set to "job".
 \item[results] is array of result objects. Each object has following notation:
   \begin{description}
   \item[node] is the id of node sending the result.
@@ -340,14 +318,14 @@ Example job document looks as follows:
   \item[hash] is result of hash function applied to result data. It is used to compare the results (if their hash matches, we assume the results are identical).
   \end{description}
  \item[requests] is an array that holds ids of nodes that has been sent the job and the market is awaiting their results. It is the equivalent of \emph{AssumedResult} from the simulator (\ref{s:simdesign}).
- \item[\_attachments] is the field for attachments. Attachments for this type of document are results and the job data itself. Only one copy of the results is stored per hash (so we do not store identical binary data objects multiple times).
+ \item[\_attachments] is the field for attachments. Job document
 \end{description}
 
 Each time a node sends its result, we add an item to \emph{results} array. Then, if no other result exists with the same hash, we also store attachment with result data.
 
 \section{Test project}
 
-The prototype comes with an example computing project. The project runs on Node.js platform and is installed under Arch Linux\footnote{https://www.archlinux.org/}. Virtual machine image for the project is 400MB in size.
+The prototype comes with an example computing project. The project runs on Node.js platform and is installed under Arch Linux\footnote{https://www.archlinux.org/}. Virtual machine image for the project is 400MB in size. The project is installed as an init script and it starts as soon as system is up. Program then uses protocol described in section~\ref{s:workmod} (\emph{Work Module}) to acquire job data. Same protocol is used to send the results back.
 
 \subsection{The problem}
 
@@ -427,4 +405,22 @@ Done
 Done
 { code: 404, body: 'No more work' }
 Powering down and removing VM
+\end{lstlisting}
+
+We can then inspect, on the server side, results that has been received. In this particular project, results are kept in JSON format, and each result file contains an array of chains, where chain is also an JSON array.
+
+\begin{lstlisting}[caption=Listing of example result file.]
+[
+  ...
+  [394811,789623],
+  [395189,790379,1580759,3161519],
+  [395201,790403],
+  [395261,790523],
+  [395273,790547],
+  [395303,790607],
+  [395849,791699],
+  [395891,791783],
+  [396239,792479,1584959,3169919],
+  ...
+]
 \end{lstlisting}
