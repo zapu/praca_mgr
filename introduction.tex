@@ -33,7 +33,7 @@ Another method of doing large distributing computation are \emph{volunteer grids
 
 \section{Cloud computing}
 
-With the rise of high bandwidth internet access, it have become possible to loosen constraints of location of nodes in the computer grid. It is no longer needed that systems that are working on one task have to be in local area network. It is feasible to dispatch work to nodes across the globe. Latency may still be an issue, so jobs have to be carefully designed to minimize amount of round trips before computation is complete.
+With the rise of high bandwidth internet access, it has become possible to loosen constraints of location of nodes in the computer grid. It is no longer needed that systems that are working on one task have to be in local area network. It is feasible to dispatch work to nodes across the globe. Latency may still be an issue, so jobs have to be carefully designed to minimize amount of round trips before computation is complete.
 
 \begin{comment}
 Han-OnTheClouds-2010.pdf
@@ -127,7 +127,7 @@ CompuP2P~\cite{gupta2006compup2p} is described as light-weight architecture for 
 
 Matchmaking is implemented similarly to an auction. Nodes with available computing power are asked about their marginal costs. CompuP2P discusses two strategies of selecting a node based on reported costs. Strategies should be employed depending whether listing price (or Market Owner's compensation) is fixed or variable. When listing price is fixed, CompuP2P proposes reverse Vickrey auction. Winning node is the one which posted the second lowest price. Neither Market Owner nor Sellers have incentive to cheat - Seller will never report lower than actual price (because it would be then operating at loss) and Market Owner has no additional gain for dishonestly selecting Seller, for example ones with higher costs.
 
-When listing price is variable, that is it is a certain percent of Seller's reported cost, Market Owner can dishonestly report Seller that is more expensive, increasing its profits. CompuP2P proposes \emph{max-min payoff} strategy. Market Owner's compensation includes fixed payoff and bounded payoff depending on maximum and minimum marginal costs reported by Sellers.
+When listing price is variable, that is, it is a certain percent of Seller's reported cost, Market Owner can dishonestly report Seller that is more expensive, increasing its profits. CompuP2P proposes \emph{max-min payoff} strategy. Market Owner's compensation includes fixed payoff and bounded payoff depending on maximum and minimum marginal costs reported by Sellers.
 
 Prototype implementation of CompuP2P is coded in Java, noting platform independence and rich set of APIs. Individual tasks to be computed using CompuP2P can be programmed in any programming technology and have to communicate with CompuP2P software using \emph{RemoteExecution} API.
 
