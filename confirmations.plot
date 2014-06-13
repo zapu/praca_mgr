@@ -27,8 +27,8 @@ bitcoin
 set xdata time
 set datafile separator ","
 set timefmt "%d/%m/%Y %H:%M:%S"
-set format x "%d.%m.%Y"
-set format y ".0%f"
+set format x "%d.%m.%y"
+set format y "%.0f"
 set xlabel "Time"
 set ylabel "Hash Rate [TH/s]"
 plot "chart-data.csv" using 1:($2/1000) title "" smooth sbezier
