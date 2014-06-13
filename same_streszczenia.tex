@@ -18,6 +18,13 @@
 \long\def\streszczenie#1{\gdef\zstreszczenie{#1}}
 \long\def\streszczeniepl#1{\gdef\@streszczeniepl{#1}}
 
+\newcommand{\doubleSignature}[2]{
+\begin{minipage}[c]{\textwidth}
+\vspace{5cm}
+\makebox[2in]{\hrulefill} \hspace {1.5in}\makebox[2in]{\hrulefill} \\
+\scriptsize#1 \makebox[3.7in][r]{\scriptsize#2} \\
+\end{minipage}
+}
 
 \begin{document}
 \include{streszczenia}
@@ -29,7 +36,11 @@
 \centerline{\large\bf Abstract}
 \vspace{2cm}
 \zstreszczenie
+\\
+\doubleSignature{Author}{Supervisor}
 \vspace*{\fill}
+
+
 
 \clearpage
 
@@ -38,6 +49,8 @@
 \centerline{\large\bf Streszczenie pracy}
 \vspace{2cm}
 \@streszczeniepl
+\\
+\doubleSignature{Autor}{Promotor}
 \vspace*{\fill}
 
 
